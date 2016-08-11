@@ -2,10 +2,13 @@
 
 """Add Docstring"""
 
+import sys
 import requests
 import time
+import logging
 
 API = "https://api.ssllabs.com/api/v2/"
+log = logging.getLogger("SSLLabsScanner")
 
 def requestAPI(path, payload={}):
 
@@ -20,7 +23,7 @@ def requestAPI(path, payload={}):
 	try:
 		response = requests.get(url, params=payload)
 	except requests.exception.RequestException as e:
-		print e
+		log.error(e)
 		sys.exit(1)
 
 	data = response.json()
@@ -42,7 +45,7 @@ def newScan(host, publish = "off", startNew = "on", all = "done", ignoreMismatch
 	payload.pop('startNew')
 	
 	while results['status'] != 'READY' and results['status'] != 'ERROR':
-		print("Scan in progress, please wait for the results.")
+		log.info("Scan in progress, please wait for the results.")
 		time.sleep(30)
 		results = requestAPI(path, payload)
 	
